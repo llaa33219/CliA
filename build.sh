@@ -65,7 +65,7 @@ BUILD_DIR="/tmp/clia-build-$TIMESTAMP"
 STATE_DIR="/tmp/clia-state-$TIMESTAMP"
 
 # Build the flatpak with --rebuild-on-sdk-change to ensure clean build
-flatpak-builder --user --install --force-clean --rebuild-on-sdk-change --state-dir="$STATE_DIR" "$BUILD_DIR" net.bloupla.CliA.json
+flatpak-builder --user --install --force-clean --rebuild-on-sdk-change --state-dir="$STATE_DIR" "$BUILD_DIR" net.bloupla.clia.json
 
 # Clean up
 rm -rf "$BUILD_DIR" "$STATE_DIR"
@@ -79,6 +79,6 @@ echo "실행 방법:"
 echo "  ./run.sh"
 echo ""
 echo "또는:"
-echo "  flatpak run net.bloupla.CliA"
+echo "  flatpak run net.bloupla.clia"
 echo ""
 
