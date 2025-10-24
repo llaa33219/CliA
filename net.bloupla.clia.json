@@ -10,7 +10,7 @@
     "--socket=wayland",
     "--device=dri",
     "--share=network",
-    "--filesystem=host",
+    "--talk-name=org.freedesktop.Flatpak",
     "--env=PYTHONPATH=/app/lib/python3.12/site-packages",
     "--env=GI_TYPELIB_PATH=/app/lib/girepository-1.0",
     "--env=TERM=xterm-256color"
@@ -93,8 +93,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://github.com/llaa33219/CliA/archive/refs/tags/1.0.0-fix5.tar.gz",
-          "sha256": "325761e2b91cad3322ebef6b4d8c1d070767e6db12fd65443aa57ce881a58fe2"
+          "url": "https://github.com/llaa33219/CliA/archive/refs/tags/1.0.0-fix6.tar.gz",
+          "sha256": "328f87a1e07ab56bccce02c167e674af2e3bc62bbc01728c471e51e49cb02ce9"
         }
       ]
     }
