@@ -1,7 +1,7 @@
 {
   "app-id": "net.bloupla.clia",
   "runtime": "org.gnome.Platform",
-  "runtime-version": "46",
+  "runtime-version": "49",
   "sdk": "org.gnome.Sdk",
   "command": "clia",
   "finish-args": [
@@ -98,8 +98,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://github.com/llaa33219/CliA/archive/refs/tags/1.0.0-fix.tar.gz",
-          "sha256": "9d5877c1723834e41f3f10f5d50ff3ce962d3031f814f7d53aa1cb3d286e4d7a"
+          "url": "https://github.com/llaa33219/CliA/archive/refs/tags/1.0.0-fix2.tar.gz",
+          "sha256": "f8b74363c067c591ed89917e94e2f8022eaa95a589f72f5e7882e8506c8124f5"
         }
       ]
     }

@@ -41,11 +41,11 @@ if ! flatpak remotes | grep -q "flathub"; then
 fi
 
 # Check if GNOME SDK is installed
-if ! flatpak list | grep -q "org.gnome.Sdk//47"; then
-    echo "📦 GNOME SDK 47 설치 중... (처음 한 번만 필요)"
+if ! flatpak list | grep -q "org.gnome.Sdk//49"; then
+    echo "📦 GNOME SDK 49 설치 중... (처음 한 번만 필요)"
     echo "   크기가 크므로 시간이 걸릴 수 있습니다."
     echo ""
-    flatpak install -y flathub org.gnome.Platform//47 org.gnome.Sdk//47
+    flatpak install -y flathub org.gnome.Platform//49 org.gnome.Sdk//49
 fi
 
 echo ""
