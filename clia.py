@@ -1353,42 +1353,20 @@ class TerminalPanel(Gtk.Box):
         self.terminal.set_vexpand(True)
         self.terminal.set_size_request(400, 300)  # Set minimum size
         
-        # Check if running in Flatpak and spawn appropriate shell
-        if os.getenv('FLATPAK_ID'):
-            # Running in Flatpak - use flatpak-spawn to run host shell
-            # This allows access to the host system instead of the sandbox
-            working_dir = os.path.expanduser("~")
-            
-            # Use flatpak-spawn --host to execute the host shell
-            # This gives us access to the actual user's environment
-            self.terminal.spawn_async(
-                Vte.PtyFlags.DEFAULT,
-                working_dir,
-                ["flatpak-spawn", "--host", "--watch-bus", "bash", "-l"],
-                None,  # environment
-                GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-                None,  # child_setup
-                None,  # child_setup_data
-                -1,    # timeout
-                None,  # cancellable
-                None,  # callback
-                None   # user_data
-            )
-        else:
-            # Not in Flatpak - spawn shell normally
-            self.terminal.spawn_async(
-                Vte.PtyFlags.DEFAULT,
-                os.environ.get("HOME"),
-                [os.environ.get("SHELL", "/bin/bash")],
-                [],
-                GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-                None,
-                None,
-                -1,
-                None,
-                None,
-                None
-            )
+        # Spawn the default shell
+        self.terminal.spawn_async(
+            Vte.PtyFlags.DEFAULT,
+            os.environ.get("HOME"),
+            [os.environ.get("SHELL", "/bin/bash")],
+            [],
+            GLib.SpawnFlags.DO_NOT_REAP_CHILD,
+            None,
+            None,
+            -1,
+            None,
+            None,
+            None
+        )
         
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
