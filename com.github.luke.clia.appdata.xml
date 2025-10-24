@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>net.bloupla.CliA</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Apache-2.0</project_license>
+  <name>CliA</name>
+  <summary>AI Terminal Agent</summary>
+  <description>
+    <p>
+      "AI Terminal Agent"
+    </p>
+  </description>
+  <launchable type="desktop-id">net.bloupla.CliA.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main window</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://github.com/llaa33219/CliA</url>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="1.0.0" date="2025-10-22">
+      <description>
+        <p>Initial release</p>
+      </description>
+    </release>
+  </releases>
+</component>
+
