@@ -96,8 +96,9 @@
       ],
       "sources": [
         {
-          "type": "dir",
-          "path": "."
+          "type": "archive",
+          "url": "https://github.com/user/repo/archive/refs/tags/v1.0.0.tar.gz",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
         }
       ]
     }
