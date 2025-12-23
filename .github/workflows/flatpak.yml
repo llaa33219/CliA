@@ -33,6 +33,39 @@ jobs:
           name: clia-flatpak
           path: clia.flatpak
 
+      - name: Setup GPG key for signing
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        run: |
+          # Create GPG home directory
+          mkdir -p /tmp/gpg-home
+          chmod 700 /tmp/gpg-home
+          
+          # Generate GPG key without passphrase for CI
+          cat > /tmp/gpg-batch << 'GPGEOF'
+          %no-protection
+          Key-Type: RSA
+          Key-Length: 4096
+          Name-Real: CliA Flatpak Repository
+          Name-Email: clia@bloupla.net
+          Expire-Date: 0
+          %commit
+          GPGEOF
+          
+          # Remove leading spaces from batch file
+          sed -i 's/^          //' /tmp/gpg-batch
+          
+          gpg --homedir /tmp/gpg-home --batch --gen-key /tmp/gpg-batch
+          
+          # Get the key ID
+          GPG_KEY_ID=$(gpg --homedir /tmp/gpg-home --list-keys --with-colons | grep pub | cut -d: -f5)
+          echo "GPG_KEY_ID=$GPG_KEY_ID" >> $GITHUB_ENV
+          echo "Generated GPG Key ID: $GPG_KEY_ID"
+          
+          # Export public key for flatpakrepo (base64 encoded)
+          gpg --homedir /tmp/gpg-home --export --armor "$GPG_KEY_ID" > /tmp/public.gpg
+          GPG_PUBLIC_KEY=$(cat /tmp/public.gpg | base64 -w 0)
+          echo "GPG_PUBLIC_KEY=$GPG_PUBLIC_KEY" >> $GITHUB_ENV
+
       - name: Create OSTree repository
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
         run: |
@@ -40,11 +73,18 @@ jobs:
           mkdir -p repo
           ostree --repo=repo init --mode=archive-z2
           
-          # Build and export to the repo (disable rofiles-fuse for container environment)
-          flatpak-builder --force-clean --disable-rofiles-fuse --repo=repo builddir net.bloupla.clia.json
+          # Build and export to the repo with GPG signing
+          flatpak-builder --force-clean --disable-rofiles-fuse \
+            --gpg-homedir=/tmp/gpg-home \
+            --gpg-sign="$GPG_KEY_ID" \
+            --repo=repo builddir net.bloupla.clia.json
           
-          # Update repo metadata and generate summary file
-          flatpak build-update-repo --prune --prune-depth=20 --generate-static-deltas repo
+          # Update repo metadata and generate summary file with GPG signing
+          flatpak build-update-repo \
+            --gpg-homedir=/tmp/gpg-home \
+            --gpg-sign="$GPG_KEY_ID" \
+            --prune --prune-depth=20 \
+            --generate-static-deltas repo
           
           # Verify summary file was created
           ls -la repo/
@@ -54,6 +94,9 @@ jobs:
             echo "ERROR: Summary file not found!"
             exit 1
           fi
+          
+          # Copy public key to repo
+          cp /tmp/public.gpg repo/
 
       - name: Upload repo artifact
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
@@ -95,11 +138,26 @@ jobs:
       - name: Copy installation files
         run: |
           cp net.bloupla.clia.flatpakref public/
-          cp net.bloupla.clia.flatpakrepo public/
           cp index.html public/
           
           # Create .nojekyll to prevent GitHub Pages from ignoring files
           touch public/.nojekyll
+          
+          # Create flatpakrepo with GPG public key
+          GPG_KEY_BASE64=$(cat public/repo/public.gpg | base64 -w 0)
+          cat > public/net.bloupla.clia.flatpakrepo << REPOEOF
+          [Flatpak Repo]
+          Title=CliA Repository
+          Url=https://llaa33219.github.io/CliA/repo/
+          Homepage=https://github.com/llaa33219/CliA
+          Comment=Official repository for CliA - AI Terminal Agent
+          Description=CliA is a GTK4-based terminal emulator with integrated AI assistance
+          Icon=https://raw.githubusercontent.com/llaa33219/CliA/main/net.bloupla.clia.svg
+          GPGKey=${GPG_KEY_BASE64}
+          REPOEOF
+          
+          # Remove leading spaces from flatpakrepo file
+          sed -i 's/^          //' public/net.bloupla.clia.flatpakrepo
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

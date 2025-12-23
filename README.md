@@ -33,7 +33,7 @@ Download and open the [.flatpakref file](https://llaa33219.github.io/CliA/net.bl
 
 ```bash
 # Add the CliA repository
-flatpak remote-add --if-not-exists --no-gpg-verify clia https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakrepo
+flatpak remote-add --if-not-exists clia https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakrepo
 
 # Install CliA
 flatpak install clia net.bloupla.clia
@@ -43,10 +43,10 @@ flatpak install clia net.bloupla.clia
 
 ```bash
 # System
-flatpak install --no-gpg-verify https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakref
+flatpak install https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakref
 
 # User
-flatpak install --user --no-gpg-verify https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakref
+flatpak install --user https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakref
 ```
 
 ### Build from Source
