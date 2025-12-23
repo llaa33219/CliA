@@ -39,15 +39,7 @@ flatpak remote-add --if-not-exists clia https://llaa33219.github.io/CliA/net.blo
 flatpak install clia net.bloupla.clia
 ```
 
-**Method 3: Direct Bundle Install**
-
-Download the `.flatpak` bundle from the [releases page](https://github.com/llaa33219/CliA/releases) and install:
-
-```bash
-flatpak install clia.flatpak
-```
-
-### Run from Source
+### Build from Source
 
 ```bash
 # Clone the repository
@@ -55,7 +47,7 @@ git clone https://github.com/llaa33219/CliA.git
 cd CliA
 
 # Run directly (requires GTK4, libadwaita, VTE, Python 3)
-./run.sh
+./build.sh
 ```
 
 ## Why CliA?
