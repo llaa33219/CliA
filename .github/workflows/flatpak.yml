@@ -43,8 +43,17 @@ jobs:
           # Build and export to the repo
           flatpak-builder --force-clean --repo=repo builddir net.bloupla.clia.json
           
-          # Update repo metadata
-          flatpak build-update-repo --generate-static-deltas repo
+          # Update repo metadata and generate summary file
+          flatpak build-update-repo --prune --prune-depth=20 --generate-static-deltas repo
+          
+          # Verify summary file was created
+          ls -la repo/
+          if [ -f repo/summary ]; then
+            echo "Summary file created successfully"
+          else
+            echo "ERROR: Summary file not found!"
+            exit 1
+          fi
 
       - name: Upload repo artifact
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
@@ -88,6 +97,9 @@ jobs:
           cp net.bloupla.clia.flatpakref public/
           cp net.bloupla.clia.flatpakrepo public/
           
+          # Create .nojekyll to prevent GitHub Pages from ignoring files
+          touch public/.nojekyll
+          
           # Create index.html for the repository
           cat > public/index.html << 'EOF'
           <!DOCTYPE html>
@@ -119,8 +131,8 @@ jobs:
                   
                   <h3>Method 2: Add Repository</h3>
                   <p>Add the repository first, then install:</p>
-                  <pre>flatpak remote-add --if-not-exists clia https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakrepo
-          flatpak install clia net.bloupla.clia</pre>
+                  <pre>flatpak remote-add --if-not-exists --no-gpg-verify clia https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakrepo
+flatpak install clia net.bloupla.clia</pre>
                   
                   <h3>Method 3: Direct Flatpak Bundle</h3>
                   <p>Download and install the bundle directly:</p>
