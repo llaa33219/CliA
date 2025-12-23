@@ -39,6 +39,16 @@ flatpak remote-add --if-not-exists clia https://llaa33219.github.io/CliA/net.blo
 flatpak install clia net.bloupla.clia
 ```
 
+**Method 3: flatpakref**
+
+```bash
+# System
+flatpak install https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakref
+
+# User
+flatpak install --user https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakref
+```
+
 ### Build from Source
 
 ```bash
