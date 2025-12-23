@@ -40,8 +40,8 @@ jobs:
           mkdir -p repo
           ostree --repo=repo init --mode=archive-z2
           
-          # Build and export to the repo
-          flatpak-builder --force-clean --repo=repo builddir net.bloupla.clia.json
+          # Build and export to the repo (disable rofiles-fuse for container environment)
+          flatpak-builder --force-clean --disable-rofiles-fuse --repo=repo builddir net.bloupla.clia.json
           
           # Update repo metadata and generate summary file
           flatpak build-update-repo --prune --prune-depth=20 --generate-static-deltas repo
