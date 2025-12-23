@@ -21,6 +21,43 @@ Work in the terminal while having an AI agent by your side, ready to help with c
 ![Screenshot of CliA](screenshot1.png)
 ![Screenshot of CliA](screenshot2.png)
 
+## Installation
+
+### Flatpak (Recommended)
+
+**Method 1: One-click Install**
+
+Download and open the [.flatpakref file](https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakref).
+
+**Method 2: Add Repository**
+
+```bash
+# Add the CliA repository
+flatpak remote-add --if-not-exists clia https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakrepo
+
+# Install CliA
+flatpak install clia net.bloupla.clia
+```
+
+**Method 3: Direct Bundle Install**
+
+Download the `.flatpak` bundle from the [releases page](https://github.com/llaa33219/CliA/releases) and install:
+
+```bash
+flatpak install clia.flatpak
+```
+
+### Run from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/llaa33219/CliA.git
+cd CliA
+
+# Run directly (requires GTK4, libadwaita, VTE, Python 3)
+./run.sh
+```
+
 ## Why CliA?
 
 Stop switching between your terminal and browser to search for command syntax or error solutions. 

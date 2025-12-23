@@ -1,0 +1,170 @@
+name: Build and Deploy Flatpak
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - '*'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49
+      options: --privileged
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Flatpak
+        uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
+        with:
+          bundle: clia.flatpak
+          manifest-path: net.bloupla.clia.json
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - name: Upload Flatpak artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: clia-flatpak
+          path: clia.flatpak
+
+      - name: Create OSTree repository
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        run: |
+          # Initialize OSTree repo for GitHub Pages
+          mkdir -p repo
+          ostree --repo=repo init --mode=archive-z2
+          
+          # Build and export to the repo
+          flatpak-builder --force-clean --repo=repo builddir net.bloupla.clia.json
+          
+          # Update repo metadata
+          flatpak build-update-repo --generate-static-deltas repo
+
+      - name: Upload repo artifact
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: flatpak-repo
+          path: repo/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download repo artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: flatpak-repo
+          path: public/repo/
+
+      - name: Download Flatpak bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: clia-flatpak
+          path: public/
+
+      - name: Copy installation files
+        run: |
+          cp net.bloupla.clia.flatpakref public/
+          cp net.bloupla.clia.flatpakrepo public/
+          
+          # Create index.html for the repository
+          cat > public/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>CliA - Flatpak Repository</title>
+              <style>
+                  body { font-family: system-ui, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+                  h1 { color: #3584e4; }
+                  .install-box { background: #f6f5f4; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                  code { background: #deddda; padding: 2px 6px; border-radius: 4px; }
+                  pre { background: #deddda; padding: 15px; border-radius: 8px; overflow-x: auto; }
+                  a { color: #3584e4; }
+                  .btn { display: inline-block; background: #3584e4; color: white; padding: 10px 20px; 
+                         border-radius: 6px; text-decoration: none; margin: 5px; }
+                  .btn:hover { background: #1c71d8; }
+              </style>
+          </head>
+          <body>
+              <h1>🖥️ CliA - AI Terminal Agent</h1>
+              <p>A powerful terminal application with integrated AI assistance.</p>
+              
+              <div class="install-box">
+                  <h2>📦 Installation</h2>
+                  
+                  <h3>Method 1: One-click Install (Recommended)</h3>
+                  <p>Download and open the flatpakref file:</p>
+                  <a href="net.bloupla.clia.flatpakref" class="btn">Download .flatpakref</a>
+                  
+                  <h3>Method 2: Add Repository</h3>
+                  <p>Add the repository first, then install:</p>
+                  <pre>flatpak remote-add --if-not-exists clia https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakrepo
+          flatpak install clia net.bloupla.clia</pre>
+                  
+                  <h3>Method 3: Direct Flatpak Bundle</h3>
+                  <p>Download and install the bundle directly:</p>
+                  <a href="clia.flatpak" class="btn">Download .flatpak bundle</a>
+                  <pre>flatpak install clia.flatpak</pre>
+              </div>
+              
+              <h2>🔗 Links</h2>
+              <ul>
+                  <li><a href="https://github.com/llaa33219/CliA">GitHub Repository</a></li>
+                  <li><a href="net.bloupla.clia.flatpakrepo">Repository File (.flatpakrepo)</a></li>
+              </ul>
+          </body>
+          </html>
+          EOF
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Flatpak bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: clia-flatpak
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: clia.flatpak
+          generate_release_notes: true

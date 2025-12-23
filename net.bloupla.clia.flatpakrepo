@@ -1,0 +1,7 @@
+[Flatpak Repo]
+Title=CliA Repository
+Url=https://llaa33219.github.io/CliA/repo/
+Homepage=https://github.com/llaa33219/CliA
+Comment=Official repository for CliA - AI Terminal Agent
+Description=CliA is a GTK4-based terminal emulator with integrated AI assistance
+Icon=https://raw.githubusercontent.com/llaa33219/CliA/main/net.bloupla.clia.svg
