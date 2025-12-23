@@ -96,58 +96,10 @@ jobs:
         run: |
           cp net.bloupla.clia.flatpakref public/
           cp net.bloupla.clia.flatpakrepo public/
+          cp index.html public/
           
           # Create .nojekyll to prevent GitHub Pages from ignoring files
           touch public/.nojekyll
-          
-          # Create index.html for the repository
-          cat > public/index.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <title>CliA - Flatpak Repository</title>
-              <style>
-                  body { font-family: system-ui, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
-                  h1 { color: #3584e4; }
-                  .install-box { background: #f6f5f4; padding: 20px; border-radius: 8px; margin: 20px 0; }
-                  code { background: #deddda; padding: 2px 6px; border-radius: 4px; }
-                  pre { background: #deddda; padding: 15px; border-radius: 8px; overflow-x: auto; }
-                  a { color: #3584e4; }
-                  .btn { display: inline-block; background: #3584e4; color: white; padding: 10px 20px; 
-                         border-radius: 6px; text-decoration: none; margin: 5px; }
-                  .btn:hover { background: #1c71d8; }
-              </style>
-          </head>
-          <body>
-              <h1>🖥️ CliA - AI Terminal Agent</h1>
-              <p>A powerful terminal application with integrated AI assistance.</p>
-              
-              <div class="install-box">
-                  <h2>📦 Installation</h2>
-                  
-                  <h3>Method 1: One-click Install (Recommended)</h3>
-                  <p>Download and open the flatpakref file:</p>
-                  <a href="net.bloupla.clia.flatpakref" class="btn">Download .flatpakref</a>
-                  
-                  <h3>Method 2: Add Repository</h3>
-                  <p>Add the repository first, then install:</p>
-                  <pre>flatpak remote-add --if-not-exists --no-gpg-verify clia https://llaa33219.github.io/CliA/net.bloupla.clia.flatpakrepo
-flatpak install clia net.bloupla.clia</pre>
-                  
-                  <h3>Method 3: Direct Flatpak Bundle</h3>
-                  <p>Download and install the bundle directly:</p>
-                  <a href="clia.flatpak" class="btn">Download .flatpak bundle</a>
-                  <pre>flatpak install clia.flatpak</pre>
-              </div>
-              
-              <h2>🔗 Links</h2>
-              <ul>
-                  <li><a href="https://github.com/llaa33219/CliA">GitHub Repository</a></li>
-                  <li><a href="net.bloupla.clia.flatpakrepo">Repository File (.flatpakrepo)</a></li>
-              </ul>
-          </body>
-          </html>
-          EOF
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
